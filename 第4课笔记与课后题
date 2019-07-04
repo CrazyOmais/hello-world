@@ -1,0 +1,60 @@
+第4课 变量和字符串
+Python中的变量：可以赋值的“名字”，可以用于计算、拼接等。
+Python中使用变量的注意事项：
+1.	在使用变量之前，需要赋值；
+2.	变量名可以包括字母、数字、下划线，但不能以数字开头；
+3.	字母区分大小写；
+4.	赋值符号是”=”，从右往左赋值；
+5.	尽量给变量起一个易于区分。
+字符串的使用
+1.	用单引号或双引号，引号必须成对；
+2.	如果字符串中需要出现引号，可以使用转义符号”\”进行转义，或者用不同的引号标注（单/双引号）；
+3.	如果要在字符串中写反斜杠”\”，可以用转义”\\”，也可以用原始字符串r‘字符串’表示，后者更方便，且节省资源。但原始字符串结尾不能加反斜杠；
+4.	如果希望得到跨越多行的字符串，需要用到三重字符串”””字符串”””;
+5.	Python仅支持英文标点。
+*但是实际编程的时候发现有些不一样，有可能是版本不同的原因？下面是Python3.7.3的代码和运行情况：
+Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 21:26:53) [MSC v.1916 32 bit (Intel)] on win32
+Type "help", "copyright", "credits" or "license()" for more information.
+>>> 5+8
+13
+>>> '5'+'8'
+'58'
+>>> "5"+"8"
+'58' 
+#目前为止和上课示范是一样的
+>>> print('https:////github.com')
+https:////github.com
+>>> print('https://github.com')
+https://github.com
+>>> "//"
+'//'
+>>> "C:\\Windows"
+'C:\\Windows'
+>>> "C:\Windows"
+'C:\\Windows'
+>>> "C:\Windows"
+'C:\\Windows'
+>>> "\"
+SyntaxError: EOL while scanning string literal
+>>> "\n\\n"
+'\n\\n'
+>>> "\""
+'"'
+>>> "'''"
+"'''"
+>>> r"test\ntest"
+'test\\ntest'
+>>> "test\ntest"
+'test\ntest'
+#看起来像默认的是原始字符串，但是仍有一些不同（最后两个指令）
+
+课后作业
+0.	编写程序： hello.py ，要求用户输入姓名并打印“你好，姓名！”
+1.	编写程序： calc.py 要求用户输入 1 到 100 之间数字并判断，输入符合要求打印“你妹好漂亮”，不符合要求则打印“你大爷好丑”
+2.	如果非要在原始字符串结尾输入反斜杠，可以如何灵活处理？
+https://www.cnblogs.com/lrjswrd/p/7202847.html
+需要对转义进行反转义，然后删除最后一个反义字符。
+>>> print(r"\n\n\n\n\n\n\\")
+SyntaxError: invalid syntax
+>>> print(r"\n\n\n\n\n\n\\"[:-1])
+\n\n\n\n\n\n\
