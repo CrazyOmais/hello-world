@@ -1,0 +1,446 @@
+第17-22课 函数
+1.1	关键字 def 与调用函数
+>>> def MyFirstFunction():
+		print('这是我创建的第一个函数！')
+print('我表示很激动.....')
+	>>> MyFirstFunction()
+这是我创建的第一个函数！
+我表示很激动.....
+1.2	执行机制
+def+函数名定义函数，然后通过函数名调用函数，程序会向上寻找定义的函数体进行执行。
+函数定义时括号里是参数名，使函数变得可变（同C++，不赘述）
+调用函数的参数格式必须与函数定义是相符
+1.3	函数的返回值return
+同C++ ，调用函数之后会返回一个参数作为下一步处理的参数
+
+2.1 形参和实参
+	形式参数 parameter：函数创建和定义过程中的参数
+	实际参数 argument：调用函数中使用的参数
+	同C++
+2.2 函数文档
+	在函数中标注一定解释性语句，可以通过调用相关语句打印文档内容。目的是让人更容易理解函数内容。
+	例：
+	>>> def MyFirstFunction(name):
+		'函数定义过程中name叫形参'
+		print('传递进来的' + name + "叫做实参，因为他是具体的参数值")
+	
+>>> MyFirstFunction('abcabc')
+传递进来的abcabc叫做实参，因为他是具体的参数值
+>>> MyFirstFunction.__doc__
+'函数定义过程中name叫形参'
+>>> help(MyFirstFunction)
+Help on function MyFirstFunction in module __main__:
+
+MyFirstFunction(name)
+函数定义过程中name叫形参
+2.3 关键字参数
+	通过关键字参数改变参数调用的顺序，目的是为了避免参数过多引起的输入混乱问题
+	>>> def SaySome(name,words):
+		print(name + '->' + words)
+	
+>>> SaySome('1','2')
+1->2
+>>> SaySome(words='1',name='2')
+2.3 默认参数
+	即定义了默认值的参数
+>>> def SaySome(name = '0',words = '1'):
+		print(name + '->' + words)
+>>> SaySome()
+0->1
+2.4 收集参数（可变参数）
+	有时候设计者也不知道函数具体需要几个参数，这种情况下在参数前加*就可以解决这个问题（这里*和C++的意义不同，需要注意）
+	>>> def test(*params):
+		print("参数的长度是: ", len(params));
+		print('第二个参数是: ', params[1]);
+	
+>>> test(1,'123',3,4,5,6)
+参数的长度是:  6
+第二个参数是:  123
+
+其原理是把实际参数用一个元组表示起来，打包调给收集参数。但是如果定义参数时收集参数后面还有一个参数，那么就需要用关键字参数注明调用给后面一个参数的实际参数是什么。否则会全部打包调用给收集参数，程序报错。例如：
+>>> def test(*params, exp):
+	print("参数的长度是: ", len(params));
+	print('第二个参数是: ', params[1]);
+	
+>>> test(1,'123',3,4,5,6,8)
+Traceback (most recent call last):
+  File "<pyshell#30>", line 1, in <module>
+    test(1,'123',3,4,5,6,8)
+TypeError: test() missing 1 required keyword-only argument: 'exp'
+>>> test(1,'123',3,4,5,6,exp = 8)
+参数的长度是:  6
+第二个参数是:  123
+
+所以用到收集参数是，其后面的参数最好设置为默认参数。
+我们常用的print()函数中就用到了收集参数。
+3.1 函数与过程
+	一般认为函数有返回值，过程没有返回值；然而python的函数即便没有return语句也是有返回值的，返回值为none
+	Python可以返回多个值，即返回列表或元组
+3.2 函数变量的作用域（重点）
+	局部变量(Local Variable):在函数里定义的参数，是作用范围在函数内的变量
+	全局变量(Global Variable):作用在全局的变量
+	在函数外无法访问函数内的局部变量。
+	在函数内修改全局变量不会改变全局变量在函数外的值，因为函数内的变量并不是全局变量，而是函数内新建的局部变量。所以最好不要在函数内部修改全局变量。
+4．内嵌函数和闭包
+4.1 global关键字
+	一旦函数内部试图修改全局变量时，python会在函数内部创建一个和该全局变量一模一样的局部变量来保护全局变量，这种操作叫做屏蔽（shadowing）。
+	在函数内改编全局变量时，需要先用关键字global声明。
+4.2 内嵌函数
+	函数内嵌套函数，内部函数整个定义和调用在外部函数之内，而在函数之外无法调用内部函数。例如：
+>>> def fun1():
+	print('fun1()正在被调用...')
+	def fun2():
+		print("fun2()正在被调用...")
+	fun2()
+
+	>>> fun1()
+fun1()正在被调用...
+fun2()正在被调用...
+>>> fun2()
+Traceback (most recent call last):
+  File "<pyshell#39>", line 1, in <module>
+    fun2()
+NameError: name 'fun2' is not defined
+4.3 闭包(closure)
+	如果在一个内部函数里对外部作用域（但不是全局作用域）的变量进行引用，那么内部函数就会被认为是闭包。举例：
+	>>> def FunX(x):
+	def FunY(y):
+		return x * y
+	return FunY
+
+>>> i = FunX(8)
+>>> i
+<function FunX.<locals>.FunY at 0x00D3BD68>
+>>> type(i)
+<class 'function'>
+>>> i(5)
+40
+>>> FunX(8)(5)
+40
+上例中 FunY是一个闭包，他调用了外部函数FunX的局部变量x，当调用外部函数FunX()时，返回的参数i是一个函数，即 FunY，如果想得到一个计算结果x*y，需要对返回的函数继续进行调用，或者调用外部函数是就进行两次参数设置（第二次的赋值是内部函数的参数）。
+闭包无法在函数外直接调用。
+在闭包里修改外部函数的参数时，仍然会造成屏蔽的问题，程序会报错；解决办法一是采用容器类型（元组或列表）调用，例如：
+>>> def Fun1():
+	x = [5]
+	def Fun2():
+		x[0] *= x[0]
+		return x[0]
+	return Fun2()
+
+>>> Fun1()
+25
+解决方法二：关键字nonLocal：
+>>> def Fun1():
+	x = 5
+	def Fun2():
+		nonlocal x
+		x *= x
+		return x
+	return Fun2()
+
+>>> Fun1()
+25
+5． lambda表达式（匿名函数）
+	>>> ds(5)
+11
+>>> lambda x : 2 * x +1
+<function <lambda> at 0x00D3BE40>
+>>> g = lambda x : 2 * x +1
+>>> g(5)
+11
+>>> def add(x,y):
+	return x + y
+
+>>> add(3,4)
+7
+>>> lambda x, y : x + y
+<function <lambda> at 0x00D3BED0>
+>>> g = lambda x, y : x + y
+>>> g(3 ,4)
+7
+
+Python写一些执行脚本时，使用lambda就可以省下函数定义的过程，比如我们只是需要写个简单的脚本来管理服务器时间，就不需要专门定义一个函数然后再写调用，使用lambda就可以使得代码更加精简
+对于一些比较抽象并且整个程序执行过程中只需要调用一两次的函数，有时候给函数起个名字也很麻烦，使用lambda就不需要考虑命名的问题了。
+Lambda还可以简化代码的可读性，普通函数的阅读经常需要调到开头def定义部分，lambda则可以省去这类步骤。
+5.2 	filter()
+	Filter需要两个参数，第一个函数可以是函数或者None，第二个参数是迭代器
+	如果第一个函数是None时，自动筛选出非零部分：
+	>>> list(filter(None, [1,0,False,True]))
+[1, True]
+
+如果第一个参数是函数，则根据函数的返回值筛选
+>>> def odd(x):
+	return x % 2
+
+>>> temp = range(10)
+>>> show = filter(odd, temp)
+>>> list(show)
+[1, 3, 5, 7, 9]
+
+结合lambda语句可以使得代码更加精简：
+>>> list(filter(lambda x : x % 2, range(10)))
+[1, 3, 5, 7, 9]
+5.3 	map()
+	映射
+	参数同上，功能是将序列的每一个元素作为参数进行运算加工，直到可迭代序列的每一个元素都加工完毕，返回所有加工后的元素构成的新序列。
+	>>> list(map(lambda x : x * 2, range(10)))
+[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+6. 	递归
+	作用：汉诺塔、树结构、谢尔宾斯基三角形、递归自拍等
+	递归：在函数内调用函数自身的操作
+	递归的的两个条件：
+1）	有调用自身的行为
+2）	有一个正确的返回条件
+示例见程序No11-0和No11-1
+递归的缺点：递归具有一定的危险性，写递归代码时一定要检查它的返回情况，并且当输入数据较大时，比较耗时，耗内存。
+递归的优点：代码简洁。
+
+课后练习：
+17课：
+0. 你有听说过 DRY 吗？
+DRY 是程序员们公认的指导原则： Don't Repeat Yourself.  
+快快武装你的思维吧，拿起函数，不要再去重复拷贝一段代码了！
+1. 都是重复一段代码，为什么我要使用函数（而不使用简单的拷贝黏贴）呢？
+使用函数 :
+0) 可以降低代码量（调用函数只需要一行，而拷贝黏贴需要 N 倍代码）
+1) 可以降低维护成本（函数只需修改 def 部分内容，而拷贝黏贴则需要每一处出现的地方
+都作修改）
+2) 使序更容易阅读（没有人会希望看到一个程序重复一万行“ I love FishC.com ”）
+2. 函数可以有多个参数吗？
+可以的， 理论上你想要有多少个就可以有多少个， 只不过如果函数的参数过多， 在调用的时候出错的机率就会大大提高， 因而写这个函数的程序员也会被相应的问候祖宗， 所以，尽量精简吧，在 Python 的世界里，精简才是王道！
+3. 创建函数使用什么关键字，要注意什么？
+	使用“ def ”关键字，要注意函数名后边要加上小括号“ () ”，然后小括号后边是冒号“ : ”，然后缩进部分均属于函数体的内容，例如：
+def MyFun(): 
+# 我是函数体
+# 我也是函数体
+# 我们都属于函数 MyFun() 
+
+# 噢，我不属于 MyFun() 函数的了
+
+4. 请问这个函数有多少个参数？
+	def MyFun((x, y), (a, b)): 
+return x * y - a * b
+如果你回答两个，那么恭喜你错啦，答案是 0，因为类似于这样的写法是错误的！
+我们分析下， 函数的参数需要的是变量， 而这里你试图用“元祖”的形式来传递是不可行的。
+	我想你如果这么写，你应该是要表达这么个意思：
+	>>> def MyFun(x,y):
+			Return x[0]*x[1] – y[0]*y[1]
+	
+	>>> MyFun((3 ,4), (1 , 2 ))
+	10
+5. 请问调用以下这个函数会打印什么内容？
+	>>> def hello(): 
+print('Hello World!') 
+return 
+print('Welcome To FishC.com!')
+
+	>>> hello()
+	Hello World!
+18课：
+0.	请问以下哪个是形参哪个是实参？
+def MyFun(x):#这里的x是形参
+		return x ** 3
+y = 3#这里的y是实参
+print(MyFun(y))
+1.	函数文档和直接用”#”为函数写注释有什么不同？
+给函数写文档是为了让别人更好的理解函数，可以采用help()语句调用查看，而注释不可以
+2.	使用关键字参数，可以有效避免什么问题的出现？
+避免参数过多导致调用参数顺序错误引起的程序错误。
+3.	使用help(print)查看print()这个BIF有哪些默认参数？分别起到什么作用？
+>>> help(print)
+Help on built-in function print in module builtins:
+
+print(...)
+    print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
+    
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+file:  a file-like object (stream); defaults to the current sys.stdout.
+#文件类型对象，默认是sys.stdout（标准输出流）
+sep:   string inserted between values, default a space.
+#第一个参数如果有多个值（第一个参数是收集参数），各个值之间默认用空格隔开
+end:   string appended after the last value, default a newline.
+#打印最后一个值之后默认参数一个新行标识符（’\n’）
+flush: whether to forcibly flush the stream.
+#是否强制刷新流
+4.	默认参数和关键字参数表面最大的区别是什么？
+关键字参数是在调用函数的时候通过参数名制定需要赋值的参数；
+而默认参数是在定义参数的过程中为形参赋予缺省值。
+
+19课：
+0.	下面程序会输入什么？
+def next():
+		print(‘我在next()函数里…’)
+		pre()
+def pre():
+		print(‘我在pre()函数里…’)
+next()
+
+会输出
+我在next()函数里…
+我在pre()函数里…
+*C++的话，应该会报错，找不到pre()函数的声明
+	
+1.		请问下面函数有返回值嘛？
+	>>> def hello():
+			Print(“hello FishC!”)
+	有，返回值是None
+2.	请问Python的return语句可以返回多个不同类型的值嘛？
+可以，默认用逗号隔开，以元组的形式返回
+3.	目测以下程序会打印什么内容
+def fun()var:
+		var = 1314
+		print(var, end=’ ’)
+var = 520
+fun(var)
+print(var)
+
+会打印：
+1314 520
+4.	目测以下程序会打印什么内容
+var = ‘Hi’
+
+def fun1():
+		global var
+		var = ‘Baby’
+		return fun2(var)
+def fun2(var):
+		var += ‘I love you’
+		fun3(var)
+		return var
+def fun3(var):
+		var = ‘小甲鱼’
+
+print(fun1())
+
+会输出：
+Baby I love you
+
+20课：
+0.	如果希望在函数中修改全局变量的值，应该使用： global关键字
+1.	在嵌套函数中如果希望在内部函数修改外部函数的局部变量，应该使用： nonlocal关键字
+2.	Python的函数可以嵌套，但要注意访问的作用域问题，请问一下代码存在问题么
+def outside():
+		print(“I am outside!”)
+		def inside():
+			print(“I am inside”)
+inside()
+
+在外部函数之外不能直接访问内部函数，程序会报错，函数inside()未声明
+正确调用为：
+def outside():
+		print(“I am outside!”)
+		def inside():
+			print(“I am inside”)
+		inside()
+outside()
+3.	请问为什么代码A没有报错但是B报错了，应该如何修改？
+代码A
+def outside():
+		var = 5
+		def inside():
+			var = 3
+			print(var)
+		inside()
+outside()
+
+代码B
+def outside():
+		var = 5
+		def inside():
+			print(var)
+			var = 3
+		inside()
+outside()
+
+因为代码在内部函数修改了变量var，由于屏蔽机制，内部函数需要新创建一个变量var，但是代码B是在创建之前调用的var，故报错
+修改办法是在内部函数里声明 nonlocal var
+4.	请问如何访问funIn()呢？
+def funOut():
+		def funIn():
+			print(“你成功访问到我了！”)
+		return funIn()
+
+直接调用funOut()
+5.	问题同上
+def funOut():
+		def funIn():
+			print(“你成功访问到我了！”)
+		return funIn
+调用funOut()() 因为返回的是函数地址而不是函数（猜测）
+或者
+go = funOut()
+go()
+6.	以下是“闭包“的一个例子，请目测会打印出什么内容
+def funX():
+		x = 5
+		def funY():
+			nonlocal x
+			x += 1
+			return x
+		return funY
+a = funX()
+print(a())
+print(a())
+print(a())
+
+打印：
+6
+7
+8
+*这里a变量只要没有重新赋值，funX()就没有被释放，所以局部变量x没有被重新初始化。
+21课：
+0.	请使用lambda表达式将下边函数转变为匿名函数
+def fun_A(x, y=3):
+		return x * y
+
+lambda x,y=3: x * y
+1.	将匿名函数转变为普通函数
+lambda x: x if x % 2 else None
+
+def fun_B(x):
+		if x%2:
+			return x
+		else:
+			return None
+2.	匿名函数给编程带来的变化？
+1)	省下了定义函数的过程
+2)	不用起名字
+3)	简化了代码的可读性，不用来回翻定义
+3.	用filter()和lambda表达式快速求出100以内所有3的倍数
+list(filter(lambda n: not(n%3), range(1, 100)))
+4.	使用列表推导式代替filter()和lambda组合，实现第三题
+[ I for I in range(1, 100) if not (i%3)]
+5.	使用map和lambda打包序列：
+输入[1,3,5,7,9], [2,4,6,8,10]	
+输出[[1,2],[3,4],[5,6],[7,8],[9,10]]
+list(map(lambda x, y : [x,y],[1,3,5,7,9],[2,4,6,8,10]))
+6.	目测以下表达式的输出
+def make_repeat(n):
+		return lambda s:s * n
+double = make_repeat(2)
+print(double(8))
+print(double(‘FishC’))
+
+16
+FishCFishC
+22课：
+0.	递归在变成上的表现形式为“
+函数调用函数自身
+1.	递归必须满足的基本条件：
+a)	函数调用自身
+b)	设置了正确的返回条件
+2.	按照递归的特性，在编程中有没有不得不使用递归的情况？
+汉诺塔、目录索引等，因为永远不知道这个目录里面是否还有目录；
+快速排序，树结构的定义等如果使用递归会事半功倍，否则程序会相当难以理解
+3.	用递归解决阶乘问题或斐波那契数列很糟糕，为什么？
+每次函数的调用都需要进行栈操作、保持和回复寄存器等，非常耗费时间和空间资源，一旦计算数量大，就会非常吃资源且计算速度慢。
+4.	递归的优缺点：
+优点：
+a)	把大规模问题转变成小规模问题，简化问题的解决难度
+b)	代码简洁易懂
+缺点：
+a)	时间和空间成本大
+b)	容易造成返回条件设置不正确的问题，程序出错
+5.	拿手机拍一张“递归自拍照片”
+对着镜子拍摄，且镜子里有手机屏幕   应该就可以了
