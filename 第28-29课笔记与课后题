@@ -1,0 +1,81 @@
+第28-29课 文件
+1.	什么是文件
+通过拓展名确定类型的信息集合
+2.	基本操作
+open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None, closefd=True, opener=None)
+
+file: 文件名
+mode: 打开模式
+encodeing: 编码格式
+
+打开模式	执行操作
+‘r’			以只读方式打开文件（默认）
+‘w’			以写入的方式打开文件，会覆盖已存在的文件
+‘x’			如果文件已经存在，使用此模式打开将引发异常
+‘a’			以写入模式打开，如果文件存在，则在末尾追加写入
+‘b’			以二进制模式打开文件
+‘t’			以文本模式打开（默认）
+‘+’			可读写模式（可添加到其他模式中使用）
+‘U’			通用换行符支持
+
+更多注释：help(open)
+
+拓展阅读：https://fishc.com.cn/thread-45279-1-1.html
+3.	文件对象方法
+文件对象方法	执行操作
+f.close()	关闭文件
+f.read([size=-1])	从文件读取size个字符，当未给定size或给定负值的时候，读取剩余的所有字符，然后作为字符串返回
+f.readline([size=-1])	从文件中读取并返回一行（包括行结束符），如果有size有定义则返回size个字符
+f.write(str)	将字符串str写入文件
+f.writelines(seq)	向文件写入字符串序列seq，seq应该是一个返回字符串的可迭代对象
+f.seek(offset, from)	在文件中移动文件指针，从from（0代表文件起始位置，1代表当前位置，2代表文件末尾）偏移offset个字节
+f.tell()	返回当前在文件中的位置
+f.truncate([size=file.tell()])	截取文件到size个字节，默认是截取到文件指针当前位置
+*迭代读取文本中的每一行可以直接用：
+	File1.seek(0,0)
+for each_line in file1:
+	print(each_line)
+	该方法比用转换列表更高效
+
+
+28课课后练习
+0.	下边有一种方式不能打开文件，请问是哪一种，为什么？
+F = open(‘E:/test.txt’, ‘w’)		# A
+F = open(‘E:\test.txt’, ‘w’)		# B
+F = open(‘E://test.txt’, ‘w’)	# C
+F = open(‘E:\\test.txt’, ‘w’)	# D
+		B不能打开，因为’\’没有转义
+1.	打开一个文件我们使用open()函数，通过设置文件的打开模式，决定打开的文件具有哪些性质，请问默认的打开模式是什么呢？
+默认的打开模式是’rt’，即可读、文本的模式打开
+2.	请问>>>open(‘E:\\Test’, ‘xb’)是以什么样的模式打开文件？
+可写二进制文本，若路径下已存在相同文件，程序会出现异常。
+3.	尽管Python有垃圾回收机制，但对于打开了的文件，在不需要用到的时候仍然需要使用f.close()进行关闭，这是为什么呢？
+close()操作执行之后会将缓存的内容保存到硬盘中，也可以防止突然断电等造成的数据流失。
+4.	如何将一个文件对象(f)中的数据存放进列表？
+list(f)
+5.	如何迭代打印出文件对象(f)中的每一行数据？
+for each in f:
+	print(each)
+6.	文件对象的内置方法f.read([size=-1])作用是读取文件对象内容，size参数是可选的，那如果设置了size=10，例如f.read(10)，将返回什么内容？
+将返回文件指针开始的连续10个字符
+7.	如何获得文件对象(f)当前文件指针的位置？
+f.tell()
+8. 视频中演示文件里为何f.seek(45,0)不会出错，而f.seek(46)就出错了？
+	参考答案：
+因为使用f.seek()定位的文件指针是按照字节为单位进行计算，演示文件中是以GBK进行编码，按照规则，一个汉字需要占用两个字节，f.seek(45)的位置位于字符“小”的开始位置，因此可以正常打印，而f.seek(46)的位置刚好位于字符“小”的中间位置，因此按照GBK编码的形式无法将其解码。
+
+编程作业（因为没有文件，所以仅手打一遍）：
+
+0.	尝试将文件(OpenMe.mp3)打印到屏幕上
+f = open(‘OpenMe.mp3’)
+for each_line in f:
+	print(each_line, end=’’)
+f.close()
+
+1.	编写代码，将上一题中的文件(OpenMe.mp3)保存为新文件（OpenMe.txt）
+f1 = open(‘OpenMe.mpe’)
+f2 = open(‘OpenMe.txt’, ‘x’)
+f2.write(f1.read())
+f1.close()
+f2.close()
+
