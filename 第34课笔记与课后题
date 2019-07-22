@@ -1,0 +1,63 @@
+第34课 else和with语句
+1.	else语句
+a)	else和while语句的配合
+见课堂练习1
+当while循环嵌套某条件语句(if)执行到break时，直接跳出循环，当没有执行到break语句直接结束while循环时，执行else语句内容（注意else的缩进，应当和while对应）
+b)	else和for语句的配合
+同a)
+c)	else和try语句的配合
+见课堂练习2
+当程序出错时，进行except语句
+当程序没出错，进行else语句
+2.	with语句
+主要作用是在打开文件的操作时，避免未进行close()操作出现的问题，使用见程序 课堂练习3
+
+课后练习
+0.	在Python中，else语句能跟哪些语句进行搭配？
+if for while try
+1.	请问以下例子中，循环中的break语句会跳过else语句嘛？
+def showMaxFactor(num):
+	count = num // 2
+	while count > 1:
+		if num % count == 0:
+			print(‘%d 最大约数是 %d’ % (num, count))
+			break
+		coune -= 1
+	else:
+		print(‘%d 是素数！’%num)
+num = int(input(‘请输入一个数：’))
+showMaxFactor(num)
+
+会跳过
+2.	请目测以下代码会打印什么内容？
+try:
+	print(‘ABC’)
+except:
+	print(‘DEF’)
+else: 
+	print(‘GHI’)
+finally:
+	print(‘JKL’)
+
+会打印
+ABC
+GHI
+JKL
+3.	使用什么语句可以使你不必担心打开文件之后却忘了关闭的尴尬？
+With语句
+try:
+	with open(‘data.txt’, ‘w’) as f:
+		for each_line in f:
+			print(each_line)
+except OSError as reason:
+	print(‘出错啦：’+ str(reason))
+4.	使用with语句固然方便，但如果出现异常的话，文件还会自动正常关闭嘛？
+参考答案：with语句会自动处理文件的打开和关闭，如果中途出现异常，会执行清理代码，然后确保文件自动关闭。
+5.	你可以换一种形式写出下边的伪代码嘛？
+with A() as a:
+with B() as b:
+suite
+
+	参考答案：with语句处理多个项目的时候，可以用逗号隔开写成一条语句
+	with A() as a, B() as b:
+		suite
