@@ -1,0 +1,40 @@
+第35课 图形用户界面入门 EasyGui
+安装参照了博客https://blog.csdn.net/weixin_40522162/article/details/80677552的方法
+下载地址https://sourceforge.net/projects/easygui/files/0.96
+步骤大致为：
+1.	下载easygui
+2.	解压文件之后把easygui.py复制到python目录下的python/Lib/site-packages文件夹中（新建文件夹easygui然后粘贴）
+3.	修改环境变量：
+我的电脑–属性–高级系统设置–高级–环境变量–新建一个新的系统变量
+变量名为PYTHONPATH
+值为*\Python36-32\lib\site-packages\easygui *为自己的安装路径
+4.	打开IDLE并测试
+安装之后我发现程序提示AttributeError: module 'easygui' has no attribute 'msgbox'
+参考了博客https://blog.csdn.net/xiaobaibaiyoubai/article/details/81286964的修改办法
+调试过程中发现在cmdpipinstall easygui操作时提示没有权限，后来在代码后加入—user就可以解决这一问题
+	最后如果问题仍然存在，可以尝试在python根目录下新建文件夹easygui，然后复制粘贴easygui.py文件
+
+Easygui学习参考了博客https://www.cnblogs.com/fuqia/p/8992438.html
+	主要编程学习了一下几个函数的使用：
+1、msgBox()
+msgbox(msg='(Your message goes here)', title=' ', ok_button='OK', image=None, root=None)
+msgbox() 显示一个消息和提供一个"OK"按钮，你可以指定任意的消息和标题，你甚至可以重写"OK"按钮的内容。
+2、ccbox()
+ccbox(msg='Shall I continue?', title=' ', choices=('Continue', 'Cancel'), image=None)
+ccbox() 提供一个选择：Continue 或者 Cancel，并相应的返回 1（选中Continue）或者 0（选中Cancel）。注意 ccbox() 是返回整型的 1 或 0，不是布尔类型的 True 或 False。
+3、ynbox()
+老实说，这个函数和ccbox()功能一模一样。。。。。一下省略好几十字。。。
+4、buttombox()
+buttonbox(msg='', title=' ', choices=('Button1', 'Button2', 'Button3'), image=None, root=None)
+可以使用 buttonbox() 定义自己的一组按钮，buttonbox() 会显示一组你定义好的按钮。
+当用户点击任意一个按钮的时候，buttonbox() 返回按钮的文本内容。如果用户取消取消或者关闭窗口，那么会返回默认选项（第一个选项）。
+5、indexbox()
+indexbox(msg='Shall I continue?', title=' ', choices=('Yes', 'No'), image=None) 
+基本跟上面一样，区别就是当用户选择第一个按钮的时候返回序列号0，选择第二个按钮时候返回序列号1。
+6、boolbox()
+boolbox(msg='Shall I continue?', title=' ', choices=('Yes', 'No'), image=None) 
+如果第一个按钮被选中则返回 1，否则返回 0。
+7、在buttonbox()中显示图片
+当你调用一个 buttonbox 函数（例如 msgbox(), ynbox(), indexbox() 等等）的时候，
+你还可以为关键字参数 image 赋值
+
